@@ -15,7 +15,7 @@ namespace NotifyControl
 
             if (isPlaySoundAlert)
             {
-                simpleSound = new SoundPlayer(@"C:\Users\Pichau\source\repos\NotifyControl\NotifyControl\Alerts\Alert01.wav");
+                simpleSound = new SoundPlayer(@"Alerts/Alert01.wav");
                 simpleSound.PlayLooping();
             }            
         }

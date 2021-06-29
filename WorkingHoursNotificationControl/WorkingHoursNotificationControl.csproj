@@ -126,7 +126,9 @@
     <None Include="Resources\refresh.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Alerts\Alert01.wav" />
+    <Content Include="Alerts\Alert01.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Resources\exportar.png" />
   </ItemGroup>
   <ItemGroup>
