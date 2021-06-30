@@ -23,10 +23,13 @@ namespace NotifyControl
 
         private readonly ContextApp _contexto;
 
+        public int _qtdMinutesExtend;
+
         public FrmControl()
         {
             InitializeComponent();
             _contexto = new ContextApp();
+            _qtdMinutesExtend = 0;
         }
 
         private void FrmControl_Load(object sender, EventArgs e)
@@ -250,7 +253,7 @@ namespace NotifyControl
                 if (tempRec == null)
                 {
                     //Horário Flexível de entrada 1
-                    if (dtAtual >= new DateTime(dtAtual.Year, dtAtual.Month, dtAtual.Day, 7, 0, 0) &&
+                    if (dtAtual >= new DateTime(dtAtual.Year, dtAtual.Month, dtAtual.Day, 7, 0, 0).AddMinutes(_qtdMinutesExtend) &&
                         dtAtual < new DateTime(dtAtual.Year, dtAtual.Month, dtAtual.Day, 9, 0, 0))
                     {
                         ShowNotification("Registre a sua primeira entrada!");
@@ -264,7 +267,7 @@ namespace NotifyControl
                     {
                         if (!tempRec.NotifiedCheckOut1)
                         {
-                            if ((dtAtual - tempRec.CheckIn1) > new TimeSpan(3, 0, 0))
+                            if ((dtAtual - tempRec.CheckIn1) > new TimeSpan(3, 0, 0).Add(new TimeSpan(0, _qtdMinutesExtend, 0)))
                             {
                                 ShowNotification("Registre a sua primeira saída!");
                             }
@@ -272,14 +275,14 @@ namespace NotifyControl
                         else if (!tempRec.NotifiedCheckIn2)
                         {
                             //Pelo menos 30 minutos de intervalo
-                            if ((dtAtual - tempRec.CheckOut1) > new TimeSpan(0, 30, 0))
+                            if ((dtAtual - tempRec.CheckOut1) > new TimeSpan(0, 30, 0).Add(new TimeSpan(0, _qtdMinutesExtend, 0)))
                             {
                                 ShowNotification("Registre a sua segunda entrada!");
                             }
                         }
                     }
                     //Horário Flexível de saída 2
-                    else if (dtAtual >= tempRec.PredictionCheckOut2)
+                    else if (dtAtual >= ((DateTime)tempRec.PredictionCheckOut2).AddMinutes(_qtdMinutesExtend))
                     {
                         //Verifica se já chegou na hora prevista para sair
                         if (!tempRec.NotifiedCheckOut2)
@@ -309,7 +312,8 @@ namespace NotifyControl
                 SendMessage(lHwnd, WM_COMMAND, (IntPtr)MIN_ALL, IntPtr.Zero);
 
                 FrmNotification form = new FrmNotification(message, chkPlaySoundAlert.Checked);
-                form.Show();
+                form.ShowDialog();
+                _qtdMinutesExtend = form._qtdMinutesExtend;
             }
         }
 
@@ -378,7 +382,6 @@ namespace NotifyControl
                 //Adicionar o item criado(linha criada) no listview
                 lvlHorarios.Items.Add(lvi);
             }
-
         }
     }
 }

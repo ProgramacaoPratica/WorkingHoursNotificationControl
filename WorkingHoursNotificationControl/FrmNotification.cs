@@ -6,23 +6,40 @@ namespace NotifyControl
 {
     public partial class FrmNotification : Form
     {
-        private readonly SoundPlayer simpleSound;
+        private readonly SoundPlayer _simpleSound;
+        private readonly bool _isPlaySoundAlert;
+        public int _qtdMinutesExtend;
+
         public FrmNotification(string message, bool isPlaySoundAlert)
         {
             InitializeComponent();
+            _isPlaySoundAlert = isPlaySoundAlert;
+            _qtdMinutesExtend = 0;
 
             lblMessage.Text = message;
 
-            if (isPlaySoundAlert)
+            if (_isPlaySoundAlert)
             {
-                simpleSound = new SoundPlayer(@"Alerts/Alert01.wav");
-                simpleSound.PlayLooping();
+                _simpleSound = new SoundPlayer(@"Alerts/Alert01.wav");
+                _simpleSound.PlayLooping();
             }            
         }
 
         private void btnCloseNotification_Click(object sender, EventArgs e)
         {
-            simpleSound.Stop();
+            CloseForm(0);
+        }
+
+        private void btnExtend10_Click(object sender, EventArgs e)
+        {
+            CloseForm(10);
+        }
+
+        private void CloseForm(int qtdMinutes)
+        {
+            _qtdMinutesExtend = qtdMinutes;
+            if (_isPlaySoundAlert)
+                _simpleSound.Stop();
             this.Close();
         }
     }
