@@ -256,7 +256,7 @@ namespace NotifyControl
                     if (dtAtual >= new DateTime(dtAtual.Year, dtAtual.Month, dtAtual.Day, 7, 0, 0).AddMinutes(_qtdMinutesExtend) &&
                         dtAtual < new DateTime(dtAtual.Year, dtAtual.Month, dtAtual.Day, 9, 0, 0))
                     {
-                        ShowNotification("Registre a sua primeira entrada!");
+                        ShowNotification("Registre a sua primeira entrada!", new DateTime(dtAtual.Year, dtAtual.Month, dtAtual.Day, 7, 0, 0));
                     }
                 }
                 else{
@@ -269,7 +269,7 @@ namespace NotifyControl
                         {
                             if ((dtAtual - tempRec.CheckIn1) > new TimeSpan(3, 0, 0).Add(new TimeSpan(0, _qtdMinutesExtend, 0)))
                             {
-                                ShowNotification("Registre a sua primeira saída!");
+                                ShowNotification("Registre a sua primeira saída!", tempRec.CheckIn1.AddHours(3));
                             }
                         }
                         else if (!tempRec.NotifiedCheckIn2)
@@ -277,24 +277,24 @@ namespace NotifyControl
                             //Pelo menos 30 minutos de intervalo
                             if ((dtAtual - tempRec.CheckOut1) > new TimeSpan(0, 30, 0).Add(new TimeSpan(0, _qtdMinutesExtend, 0)))
                             {
-                                ShowNotification("Registre a sua segunda entrada!");
+                                ShowNotification("Registre a sua segunda entrada!", tempRec.CheckOut1.Value.AddMinutes(30));
                             }
                         }
                     }
                     //Horário Flexível de saída 2
-                    else if (dtAtual >= ((DateTime)tempRec.PredictionCheckOut2).AddMinutes(_qtdMinutesExtend))
+                    else if (dtAtual >= new DateTime(tempRec.PredictionCheckOut2.Value.Millisecond).AddMinutes(_qtdMinutesExtend))
                     {
                         //Verifica se já chegou na hora prevista para sair
                         if (!tempRec.NotifiedCheckOut2)
                         {
-                            ShowNotification("Registre a sua segunda saída!");
+                            ShowNotification("Registre a sua segunda saída!", tempRec.PredictionCheckOut2.Value);
                         }
                     }
                 }
             }
         }
 
-        private void ShowNotification(string message)
+        private void ShowNotification(string message, DateTime referenceTime)
         {
             bool isOpen = false;
             foreach (Form form in Application.OpenForms)
@@ -313,7 +313,7 @@ namespace NotifyControl
 
                 FrmNotification form = new FrmNotification(message, chkPlaySoundAlert.Checked);
                 form.ShowDialog();
-                _qtdMinutesExtend = form._qtdMinutesExtend;
+                _qtdMinutesExtend = (DateTime.Now - referenceTime).Minutes +  form._qtdMinutesExtend;
             }
         }
 

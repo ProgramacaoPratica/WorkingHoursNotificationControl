@@ -20,7 +20,7 @@ namespace NotifyControl
 
             if (_isPlaySoundAlert)
             {
-                _simpleSound = new SoundPlayer(@"Alerts/Alert01.wav");
+                _simpleSound = new SoundPlayer(@"Alerts\Alert01.wav");
                 _simpleSound.PlayLooping();
             }            
         }
